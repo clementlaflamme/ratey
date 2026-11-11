@@ -24,16 +24,16 @@
 
 <br />
 
-<img src="docs/images/home_wip.png" alt="Écran d'accueil de Ratey (en cours de développement)" width="850" />
+<img src="docs/images/home.png" alt="Écran d'accueil de Ratey : carrousel des jeux les mieux évalués et dernières évaluations" width="850" />
 
-<sub><i>Écran d'accueil — version en cours de développement</i></sub>
+<sub><i>Écran d'accueil : vos jeux les mieux évalués et vos dernières évaluations</i></sub>
 
 </div>
 
 ---
 
 > [!NOTE]
-> **🚧 Travail en cours.** Ratey est activement développé : certaines fonctionnalités décrites ci-dessous sont encore en construction et l'interface évolue régulièrement.
+> **🚧 Travail en cours.** Le cœur de Ratey fonctionne de bout en bout : recherche IGDB, fiche d'un jeu, évaluations, favoris et « À jouer plus tard », enregistrés dans la base de données. Restent la page des paramètres, le durcissement d'Electron et le déploiement (voir la feuille de route plus bas).
 
 ## 💜 À propos
 
@@ -44,12 +44,23 @@ C'est un **projet personnel**, né de ma passion pour le jeu vidéo et de l'envi
 ## ✨ Fonctionnalités
 
 - 🔐 **Authentification** : inscription et connexion avec Clerk
-- 🔎 **Recherche de jeux** via l'API d'[IGDB](https://www.igdb.com/)
+- 🔎 **Recherche de jeux** via l'API d'[IGDB](https://www.igdb.com/) : suggestions pendant la frappe et écran de résultats, classés par popularité et correspondance du titre, sans les éditions, DLC ni bundles
+- 🎮 **Fiche d'un jeu** : pochette, studio, date de sortie, genres et plateformes
 - ⭐ **Évaluations** sur 5 étoiles, au quart de point près (ex. : 4.25 / 5), modifiables et supprimables
 - ❤️ **Favoris** et **liste « À jouer plus tard »**
 - 🗂️ **Recherche et tri** dans ses listes par titre, studio, année ou évaluation
 - 🏆 **Accueil personnalisé** : carrousel de vos jeux les mieux notés et dernières évaluations
 - ⚙️ **Paramètres** du compte
+
+## 📸 Aperçu
+
+|                                           Recherche : suggestions                                            |                                 Recherche : écran de résultats                                 |
+| :----------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------: |
+|  <img src="docs/images/search_list.png" alt="Suggestions de jeux sous la barre de recherche" width="420" />  |  <img src="docs/images/search_page.png" alt="Écran de résultats de recherche" width="420" />   |
+|                                       **Fiche d'un jeu et évaluation**                                       |                                      **Vos évaluations**                                       |
+| <img src="docs/images/game_selected.png" alt="Fiche d'un jeu avec le formulaire d'évaluation" width="420" /> |         <img src="docs/images/ratings.png" alt="Liste des jeux évalués" width="420" />         |
+|                                               **Vos favoris**                                                |                                     **À jouer plus tard**                                      |
+|               <img src="docs/images/favorites.png" alt="Liste des jeux favoris" width="420" />               | <img src="docs/images/to_play_later.png" alt="Liste des jeux à jouer plus tard" width="420" /> |
 
 ## 🛠️ Stack technique
 
@@ -84,7 +95,7 @@ Quelques choix dont je suis fier :
 
 - **Aucun secret dans l'application** : toutes les clés (base de données, IGDB) restent côté serveur. L'app ne transmet que le jeton de session Clerk.
 - **L'identité vient toujours du jeton** : l'API déduit l'utilisateur du jeton vérifié, jamais d'un paramètre envoyé par le client.
-- **Electron durci** : CSP stricte, sandbox, protocole personnalisé `app://` et blocage de la navigation externe.
+- **Recherche mieux classée qu'IGDB** : IGDB ne sait pas trier une recherche par popularité. L'API prend les 50 résultats les plus pertinents et les reclasse avec un score qui combine la popularité (échelle logarithmique) et la correspondance du titre.
 - **Code partagé** : la logique métier pure (arrondi des notes au quart de point, tris, filtres) est mutualisée entre l'app et l'API, et testée avec Vitest.
 
 ## 🤖 Développé avec Claude Code
@@ -103,10 +114,13 @@ Cette approche me permet d'aller plus vite tout en gardant la maîtrise des déc
 
 - [x] Modèle de données et migration initiale (Prisma + Neon)
 - [x] Écran d'accueil et navigation
-- [ ] API Hono : routes des favoris, de « À jouer plus tard » et des évaluations
-- [ ] Recherche de jeux via IGDB
-- [ ] Pages « Favoris », « À jouer plus tard » et « Vos évaluations » avec recherche et tri
+- [x] API Hono : routes des favoris, de « À jouer plus tard » et des évaluations, protégées par Clerk
+- [x] Recherche de jeux via IGDB : suggestions, écran de résultats, classement par popularité
+- [x] Fiche d'un jeu : ajout aux listes, évaluation modifiable et supprimable
+- [x] Pages « Favoris », « À jouer plus tard » et « Vos évaluations » avec recherche et tri
+- [x] Application branchée sur l'API (fin des données fictives)
 - [ ] Page des paramètres
+- [ ] Durcissement d'Electron : CSP stricte, sandbox, protocole `app://`, blocage de la navigation externe
 - [ ] Déploiement de l'API sur Vercel et distribution de l'application
 
 ## 🚀 Lancer le projet
@@ -114,24 +128,25 @@ Cette approche me permet d'aller plus vite tout en gardant la maîtrise des déc
 Prérequis : Node.js et npm.
 
 ```bash
-# Application
-npm install
-cp .env.example .env         # variables VITE_* publiques
-npm run start
-
-# API
+# API (à lancer en premier)
 cd server
 npm install
 cp .env.example .env         # secrets de l'API (Neon, Clerk, IGDB)
+npm run dev                  # http://localhost:3000
+
+# Application (dans un autre terminal, à la racine)
+npm install
+cp .env.example .env         # clé publique Clerk et VITE_API_URL
+npm run start
 ```
 
 Autres commandes utiles :
 
-| Commande        | Description                                      |
-| --------------- | ------------------------------------------------ |
-| `npm test`      | Lance les tests Vitest                           |
-| `npm run lint`  | Vérifie le code (oxlint) et le formatage (oxfmt) |
-| `npm run build` | Vérifie les types et package l'application       |
+| Commande        | Description                                         |
+| --------------- | --------------------------------------------------- |
+| `npm test`      | Lance les tests Vitest (app ; dans `server/` : API) |
+| `npm run lint`  | Vérifie le code (oxlint) et le formatage (oxfmt)    |
+| `npm run build` | Vérifie les types et package l'application          |
 
 ## 📁 Structure
 
