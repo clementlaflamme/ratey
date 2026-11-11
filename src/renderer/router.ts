@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import HomePage from './pages/HomePage.vue';
+import LibraryPage from './pages/LibraryPage.vue';
 import PlaceholderPage from './pages/PlaceholderPage.vue';
 
 declare module 'vue-router' {
@@ -21,20 +22,23 @@ export const router = createRouter({
     {
       path: '/a-jouer',
       name: 'play-later',
-      component: PlaceholderPage,
+      component: LibraryPage,
+      props: { list: 'play-later' },
       meta: { title: 'À jouer plus tard' },
     },
     {
       path: '/favoris',
       name: 'favourites',
-      component: PlaceholderPage,
-      meta: { title: 'Mes favoris' },
+      component: LibraryPage,
+      props: { list: 'favourites' },
+      meta: { title: 'Vos favoris' },
     },
     {
       path: '/evaluations',
       name: 'ratings',
-      component: PlaceholderPage,
-      meta: { title: 'Mes évaluations' },
+      component: LibraryPage,
+      props: { list: 'ratings' },
+      meta: { title: 'Vos évaluations' },
     },
     {
       path: '/parametres',

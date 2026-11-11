@@ -10,6 +10,10 @@
   --color-sidebar: #4b4b4b;
   --color-muted: #8e8e93;
   --color-divider: #2a2a2a;
+  --color-card: #333333;
+  --color-field: #ece6f0;
+  --color-field-alt: #f7f2fa;
+  --color-on-field: #49454f;
 }
 
 html,

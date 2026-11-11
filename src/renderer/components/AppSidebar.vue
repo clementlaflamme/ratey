@@ -14,8 +14,8 @@ interface NavItem {
 const mainItems: NavItem[] = [
   { to: '/', label: 'Accueil', icon: homeIcon },
   { to: '/a-jouer', label: 'À jouer plus tard', icon: playLaterIcon },
-  { to: '/favoris', label: 'Mes favoris', icon: favouritesIcon },
-  { to: '/evaluations', label: 'Mes évaluations', icon: ratingsIcon },
+  { to: '/favoris', label: 'Vos favoris', icon: favouritesIcon },
+  { to: '/evaluations', label: 'Vos évaluations', icon: ratingsIcon },
 ];
 
 // Guillemets obligatoires : Vite intègre les petits SVG en URL `data:`
