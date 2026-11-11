@@ -25,3 +25,45 @@ body,
 body {
   @apply bg-surface font-sans text-white antialiased;
 }
+
+/*
+ * Barres de défilement aux couleurs de l'app (Chromium, donc Electron).
+ * Ne pas ajouter `scrollbar-color` / `scrollbar-width` : depuis Chromium 121,
+ * ces propriétés standard désactivent les pseudo-éléments ci-dessous.
+ */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Pouce en pilule : la bordure transparente le décolle du bord. */
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 9999px;
+  background: linear-gradient(
+      var(--color-ratey-violet),
+      var(--color-ratey-magenta)
+    )
+    padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  border-width: 2px;
+  background: linear-gradient(
+      color-mix(in srgb, var(--color-ratey-violet), white 15%),
+      color-mix(in srgb, var(--color-ratey-magenta), white 15%)
+    )
+    padding-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--color-ratey-magenta) padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
