@@ -1,9 +1,22 @@
 <script setup lang="ts">
 import { useTemplateRef, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { Show, SignIn } from '@clerk/vue';
+import { Show, SignIn, useAuth } from '@clerk/vue';
 import AppHeader from './components/AppHeader.vue';
 import AppSidebar from './components/AppSidebar.vue';
+import { clearLibrary, loadLibrary } from './composables/useLibrary';
+
+// Bibliothèque chargée à la connexion, vidée à la déconnexion (ou au
+// changement de compte) : jamais les données d'un autre utilisateur.
+const { userId } = useAuth();
+watch(
+  userId,
+  (id) => {
+    clearLibrary();
+    if (id) void loadLibrary();
+  },
+  { immediate: true },
+);
 
 // C'est <main> qui défile (pas la fenêtre) : on remonte en haut à chaque page.
 const route = useRoute();

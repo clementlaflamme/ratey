@@ -20,6 +20,10 @@ const props = defineProps<{ id: number }>();
 const {
   game,
   userEntry,
+  loading,
+  error,
+  saving,
+  saveError,
   setFavourite,
   setToPlayLater,
   saveRating,
@@ -45,22 +49,35 @@ watch(
 
 const showForm = computed(() => rating.value === null || editing.value);
 
-function onSave(newRating: number, newComment: string | null) {
-  saveRating(newRating, newComment);
-  editing.value = false;
+async function onSave(newRating: number, newComment: string | null) {
+  // En cas d'erreur, le formulaire reste ouvert avec la saisie.
+  if (await saveRating(newRating, newComment)) editing.value = false;
 }
 
-function onConfirmDelete() {
-  deleteRating();
+async function onConfirmDelete() {
   confirmingDelete.value = false;
-  editing.value = false;
+  if (await deleteRating()) editing.value = false;
 }
 </script>
 
 <template>
   <div class="mx-auto max-w-[80rem] px-12 pt-4 pb-10">
+    <p
+      v-if="loading && !game"
+      role="status"
+      class="py-10 text-center text-muted"
+    >
+      Chargement…
+    </p>
+
     <EmptyState
-      v-if="!game"
+      v-else-if="error && !game"
+      title="Impossible de charger ce jeu"
+      :message="error"
+    />
+
+    <EmptyState
+      v-else-if="!game"
       title="Jeu introuvable"
       message="Ce jeu n'existe pas ou n'est plus disponible."
     />
@@ -71,6 +88,7 @@ function onConfirmDelete() {
           type="button"
           class="toggle"
           :aria-pressed="isToPlayLater"
+          :disabled="saving"
           :title="
             isToPlayLater
               ? 'Retirer de « À jouer plus tard »'
@@ -85,6 +103,7 @@ function onConfirmDelete() {
           type="button"
           class="toggle"
           :aria-pressed="isFavourite"
+          :disabled="saving"
           :title="isFavourite ? 'Retirer des favoris' : 'Ajouter aux favoris'"
           @click="setFavourite(!isFavourite)"
         >
@@ -150,6 +169,14 @@ function onConfirmDelete() {
       <hr class="border-t-2 border-white/20" />
 
       <section aria-labelledby="rating-title" class="flex flex-col gap-6 p-8">
+        <p
+          v-if="saveError"
+          role="alert"
+          class="rounded-2xl bg-red-500/15 px-5 py-3 font-bold text-red-200"
+        >
+          {{ saveError }}
+        </p>
+
         <div class="flex items-center justify-between gap-4">
           <h2 id="rating-title" class="text-4xl font-bold">
             {{ rating === null ? 'Évaluez ce jeu' : 'Votre évaluation' }}
@@ -159,6 +186,7 @@ function onConfirmDelete() {
               type="button"
               class="action"
               title="Modifier l'évaluation"
+              :disabled="saving"
               @click="editing = true"
             >
               <MaskIcon :icon="editIcon" class="size-10" />
@@ -168,6 +196,7 @@ function onConfirmDelete() {
               type="button"
               class="action"
               title="Supprimer l'évaluation"
+              :disabled="saving"
               @click="confirmingDelete = true"
             >
               <MaskIcon :icon="deleteIcon" class="size-10" />
@@ -223,6 +252,11 @@ function onConfirmDelete() {
 .toggle,
 .action {
   @apply grid size-14 place-items-center rounded-full text-neutral-300 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white;
+}
+
+.toggle:disabled,
+.action:disabled {
+  @apply cursor-wait opacity-60;
 }
 
 .toggle[aria-pressed='true'] {

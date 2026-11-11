@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { latestRated, topRated } from '../../shared/ratings';
+import { useLibrary } from '../composables/useLibrary';
 import { useRatings } from '../composables/useRatings';
 import EmptyState from '../components/EmptyState.vue';
 import GameCard from '../components/GameCard.vue';
@@ -10,13 +11,40 @@ import trophy from '../assets/trophy.svg';
 const TOP_COUNT = 10;
 const LATEST_COUNT = 3;
 
-const { ratings } = useRatings();
+const { ratings, loading, error } = useRatings();
+const { reload } = useLibrary();
 const top = computed(() => topRated(ratings.value, TOP_COUNT));
 const latest = computed(() => latestRated(ratings.value, LATEST_COUNT));
 </script>
 
 <template>
-  <div class="mx-auto flex max-w-6xl flex-col gap-10 px-12 py-10">
+  <div
+    v-if="loading && !ratings.length"
+    role="status"
+    class="py-10 text-center text-muted"
+  >
+    Chargement…
+  </div>
+
+  <div
+    v-else-if="error && !ratings.length"
+    role="alert"
+    class="mx-auto flex max-w-6xl flex-col items-center gap-4 px-12 py-10"
+  >
+    <EmptyState
+      title="Impossible de charger vos évaluations"
+      :message="error"
+    />
+    <button
+      type="button"
+      class="rounded-full bg-ratey-magenta px-6 py-2 font-bold text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-white"
+      @click="reload"
+    >
+      Réessayer
+    </button>
+  </div>
+
+  <div v-else class="mx-auto flex max-w-6xl flex-col gap-10 px-12 py-10">
     <section aria-labelledby="top-title" class="flex flex-col gap-6">
       <h2
         id="top-title"

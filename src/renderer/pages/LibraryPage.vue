@@ -9,6 +9,7 @@ import {
   type SortKey,
   type SortOption,
 } from '../../shared/library';
+import { errorMessage } from '../composables/api';
 import { useLibrary, type LibraryList } from '../composables/useLibrary';
 import ConfirmDialog from '../components/ConfirmDialog.vue';
 import EmptyState from '../components/EmptyState.vue';
@@ -89,7 +90,7 @@ const props = defineProps<{ list: LibraryList }>();
 
 const config = computed(() => CONFIG[props.list]);
 
-const { gamesIn, removeFrom } = useLibrary();
+const { gamesIn, removeFrom, loading, error, reload } = useLibrary();
 const games = computed(() => gamesIn(props.list).value);
 
 const query = ref('');
@@ -102,6 +103,7 @@ watch(
     query.value = '';
     sort.value = null;
     pending.value = null;
+    removeError.value = null;
   },
 );
 
@@ -125,9 +127,19 @@ function requestRemove(game: LibraryGame) {
   pending.value = game;
 }
 
-function confirmRemove() {
-  if (pending.value) removeFrom(props.list, pending.value.id);
+/** Erreur du dernier retrait */
+const removeError = ref<string | null>(null);
+
+async function confirmRemove() {
+  const game = pending.value;
   pending.value = null;
+  if (!game) return;
+  removeError.value = null;
+  try {
+    await removeFrom(props.list, game.id);
+  } catch (caught) {
+    removeError.value = `Impossible de retirer ${game.name} : ${errorMessage(caught)}`;
+  }
 }
 </script>
 
@@ -135,7 +147,26 @@ function confirmRemove() {
   <div class="mx-auto flex max-w-[80rem] flex-col gap-6 px-12 pt-4 pb-10">
     <h2 class="text-center text-5xl font-bold">{{ config.title }}</h2>
 
-    <template v-if="games.length">
+    <p v-if="removeError" role="alert" class="alert">{{ removeError }}</p>
+
+    <p
+      v-if="loading && !games.length"
+      role="status"
+      class="text-center text-muted"
+    >
+      Chargement…
+    </p>
+
+    <div
+      v-else-if="error && !games.length"
+      role="alert"
+      class="flex flex-col items-center gap-4"
+    >
+      <EmptyState title="Impossible de charger vos jeux" :message="error" />
+      <button type="button" class="retry" @click="reload">Réessayer</button>
+    </div>
+
+    <template v-else-if="games.length">
       <LibraryToolbar
         v-model:query="query"
         v-model:sort="sort"
@@ -180,3 +211,15 @@ function confirmRemove() {
     />
   </div>
 </template>
+
+<style scoped>
+@reference '../index.css';
+
+.alert {
+  @apply rounded-2xl bg-red-500/15 px-5 py-3 text-center font-bold text-red-200;
+}
+
+.retry {
+  @apply rounded-full bg-ratey-magenta px-6 py-2 font-bold text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-white;
+}
+</style>

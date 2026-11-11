@@ -3,6 +3,7 @@ import GamePage from './pages/GamePage.vue';
 import HomePage from './pages/HomePage.vue';
 import LibraryPage from './pages/LibraryPage.vue';
 import PlaceholderPage from './pages/PlaceholderPage.vue';
+import SearchPage from './pages/SearchPage.vue';
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -47,6 +48,15 @@ export const router = createRouter({
       component: GamePage,
       props: (route) => ({ id: Number(route.params.id) }),
       meta: { title: 'Jeu' },
+    },
+    {
+      path: '/recherche',
+      name: 'search',
+      component: SearchPage,
+      props: (route) => ({
+        q: typeof route.query.q === 'string' ? route.query.q : '',
+      }),
+      meta: { title: 'Recherche' },
     },
     {
       path: '/parametres',

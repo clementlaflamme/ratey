@@ -55,16 +55,32 @@ export interface GameDetails {
   platforms: Platform[];
 }
 
-/** Relation utilisateur–jeu (ligne users_games). */
-export interface UserGameEntry {
-  /** ID IGDB du jeu */
-  gameId: number;
+/** Relation de l'utilisateur avec un jeu (ligne users_games). */
+export interface GameEntry {
   /** Note sur 5, au quart de point ; null si le jeu n'est pas évalué */
   rating: number | null;
   /** Commentaire de l'évaluation */
   comment: string | null;
   isFavourite: boolean;
   isToPlayLater: boolean;
-  /** Date de la dernière modification de la ligne (ISO 8601) */
-  updatedAt: string;
+}
+
+/** Réponse de GET /games/:gameId. */
+export interface GameWithEntry {
+  game: GameDetails;
+  /** null si l'utilisateur n'a encore rien fait avec ce jeu */
+  entry: GameEntry | null;
+}
+
+/** Résultat de la recherche IGDB (sans les données de l'utilisateur). */
+export interface GameSummary {
+  /** ID IGDB */
+  id: number;
+  name: string;
+  /** image_id de la pochette IGDB */
+  coverImageId: string | null;
+  /** Nom du studio de développement principal */
+  studio: string | null;
+  /** Année de sortie */
+  releaseYear: number | null;
 }
