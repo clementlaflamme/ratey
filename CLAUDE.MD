@@ -4,11 +4,13 @@
 
 Ratey est une application pour rechercher et noter des jeux vidéos.
 
-Un utilisateur doit, avant d'utiliser l'application : 
+Un utilisateur doit, avant d'utiliser l'application :
+
 - S'inscrire / se connecter avec Clerk
 
 Un utilisateur connecté peut :
-- Naviguer à travers les pages 
+
+- Naviguer à travers les pages
 - Rechercher des jeux dans la barre de recherche du haut (API d'IGDB)
 - Voir la carte d'un jeu
 - L'ajouter à : ses favoris, à jouer plus tard, donner une évaluation (base de 5 étoiles, peut noter en quart de points. ex.: 4.25/5)
@@ -19,6 +21,7 @@ Un utilisateur connecté peut :
 - Se déconnecter
 
 # Stack
+
 - App : Electron (TypeScript), Vite, Vue.js, Tailwind, Clerk (`@clerk/vue`)
 - API : Hono sur Vercel, Prisma 7 + Neon (PostgreSQL), Clerk (vérification des jetons)
 - Tests : Vitest
@@ -29,12 +32,14 @@ Un utilisateur connecté peut :
 - `npm test` : tests Vitest, à lancer après chaque modification.
 - `npm run lint` et `npm run build` : doivent passer avant chaque commit
 - `npx prisma validate` (dans `server/`) : après toute modification de `server/prisma/schema.prisma`
+- Dans `server/` : `npm run dev` (API locale sur le port 3000), `npm test`, `npm run typecheck`
 
 # Structure
 
 Architecture : l'app Electron ne contient **aucun secret**. Elle appelle l'API Ratey (Hono, hébergée sur Vercel) en HTTPS avec le jeton de session Clerk. L'API vérifie le jeton, puis accède à Neon (Prisma) et à IGDB.
 
 App Electron :
+
 - `src/main/` : process principal (`main.ts` : fenêtres, cycle de vie, durcissement de la sécurité : CSP, sandbox, protocole `app://`, blocage de la navigation externe)
 - `src/preload/` : script preload (`preload.ts`), pont minimal entre main et renderer
 - `src/renderer/` : interface Vue, racine Vite du renderer
@@ -43,6 +48,7 @@ App Electron :
 - `src/shared/` : code pur partagé entre l'app et l'API (types, arrondi des notes au quart de point, tris, filtres)
 
 API (`server/`, avec son propre `package.json`) :
+
 - `server/src/routes/` : routes Hono (favoris, à jouer plus tard, évaluations, recherche IGDB)
 - `server/src/db/` : client Prisma (adaptateur Neon) et CRUD par entité
 - `server/src/igdb/` : jeton Twitch et requêtes IGDB
@@ -51,6 +57,7 @@ API (`server/`, avec son propre `package.json`) :
 - Client Prisma généré : ignoré par git, ne pas modifier
 
 Commun :
+
 - `docs/` : cahier des charges, diagramme de classes, journal IA
 - Tests Vitest à côté du fichier testé : `*.test.ts`
 - Config : `forge.config.mts` (Electron Forge), `vite.{main,preload,renderer}.config.mts`, `.oxlintrc.json` / `.oxfmtrc.json`
