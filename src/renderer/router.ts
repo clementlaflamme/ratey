@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
+import GamePage from './pages/GamePage.vue';
 import HomePage from './pages/HomePage.vue';
 import LibraryPage from './pages/LibraryPage.vue';
 import PlaceholderPage from './pages/PlaceholderPage.vue';
@@ -39,6 +40,13 @@ export const router = createRouter({
       component: LibraryPage,
       props: { list: 'ratings' },
       meta: { title: 'Vos évaluations' },
+    },
+    {
+      path: '/jeu/:id(\\d+)',
+      name: 'game',
+      component: GamePage,
+      props: (route) => ({ id: Number(route.params.id) }),
+      meta: { title: 'Jeu' },
     },
     {
       path: '/parametres',

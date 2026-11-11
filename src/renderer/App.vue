@@ -1,7 +1,17 @@
 <script setup lang="ts">
+import { useTemplateRef, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { Show, SignIn } from '@clerk/vue';
 import AppHeader from './components/AppHeader.vue';
 import AppSidebar from './components/AppSidebar.vue';
+
+// C'est <main> qui défile (pas la fenêtre) : on remonte en haut à chaque page.
+const route = useRoute();
+const main = useTemplateRef<HTMLElement>('main');
+watch(
+  () => route.fullPath,
+  () => main.value?.scrollTo({ top: 0 }),
+);
 </script>
 
 <template>
@@ -9,7 +19,7 @@ import AppSidebar from './components/AppSidebar.vue';
     <div class="grid h-full grid-cols-[6rem_1fr] grid-rows-[auto_1fr]">
       <AppHeader class="col-span-2" />
       <AppSidebar />
-      <main class="min-w-0 overflow-y-auto">
+      <main ref="main" class="min-w-0 overflow-y-auto">
         <RouterView />
       </main>
     </div>

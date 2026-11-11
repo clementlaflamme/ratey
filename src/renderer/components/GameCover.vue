@@ -2,7 +2,15 @@
 import { computed, ref, watch } from 'vue';
 import { coverUrl } from '../../shared/ratings';
 
-const props = defineProps<{ coverImageId: string | null; name: string }>();
+const props = withDefaults(
+  defineProps<{
+    coverImageId: string | null;
+    name: string;
+    /** Taille IGDB : 720p pour un affichage en grand */
+    size?: 'cover_big' | '720p';
+  }>(),
+  { size: 'cover_big' },
+);
 
 const failed = ref(false);
 watch(
@@ -11,7 +19,7 @@ watch(
 );
 
 const src = computed(() =>
-  failed.value ? null : coverUrl(props.coverImageId),
+  failed.value ? null : coverUrl(props.coverImageId, props.size),
 );
 </script>
 

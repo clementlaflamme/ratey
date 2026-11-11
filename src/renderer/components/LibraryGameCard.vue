@@ -4,6 +4,7 @@ import type { LibraryGame } from '../../shared/types';
 import { studioAndYear } from '../../shared/library';
 import { formatRating } from '../../shared/stars';
 import GameCover from './GameCover.vue';
+import MaskIcon from './MaskIcon.vue';
 import StarRating from './StarRating.vue';
 
 const props = defineProps<{
@@ -17,14 +18,11 @@ const props = defineProps<{
 const emit = defineEmits<{ remove: [] }>();
 
 const meta = computed(() => studioAndYear(props.game));
-
-// Guillemets obligatoires : les petits SVG sont intégrés en URL `data:`.
-const iconStyle = computed(() => ({ '--icon': `url("${props.removeIcon}")` }));
 </script>
 
 <template>
   <article
-    class="group relative flex h-full flex-col items-center gap-3 rounded-[25px] bg-card px-5 pt-3 pb-6 text-center"
+    class="group relative flex h-full flex-col items-center gap-3 rounded-[25px] bg-card px-5 pt-3 pb-6 text-center transition hover:bg-[#383838]"
     :aria-label="game.name"
   >
     <GameCover
@@ -33,7 +31,13 @@ const iconStyle = computed(() => ({ '--icon': `url("${props.removeIcon}")` }));
       class="w-[8.3rem] shrink-0"
     />
     <h3 class="mt-2 line-clamp-2 leading-snug font-bold text-balance">
-      {{ game.name }}
+      <!-- Lien étiré : toute la carte ouvre la page du jeu. -->
+      <RouterLink
+        :to="{ name: 'game', params: { id: game.id } }"
+        class="card-link"
+      >
+        {{ game.name }}
+      </RouterLink>
     </h3>
     <p v-if="meta" class="font-bold">{{ meta }}</p>
     <template v-if="game.rating !== null">
@@ -48,7 +52,7 @@ const iconStyle = computed(() => ({ '--icon': `url("${props.removeIcon}")` }));
       :title="removeLabel"
       @click="emit('remove')"
     >
-      <span class="remove-icon" :style="iconStyle" aria-hidden="true" />
+      <MaskIcon :icon="removeIcon" class="size-6" />
     </button>
   </article>
 </template>
@@ -56,14 +60,12 @@ const iconStyle = computed(() => ({ '--icon': `url("${props.removeIcon}")` }));
 <style scoped>
 @reference '../index.css';
 
-/* Visible au survol de la carte, ou au focus clavier du bouton */
-.remove-button {
-  @apply absolute top-3 right-3 grid size-11 place-items-center rounded-full bg-black/60 text-white opacity-0 shadow-md transition hover:bg-black/80 hover:text-ratey-magenta focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-white group-hover:opacity-100;
+.card-link {
+  @apply focus-visible:outline-none after:absolute after:inset-0 after:rounded-[25px] focus-visible:after:outline-2 focus-visible:after:outline-white;
 }
 
-/* L'icône de la barre latérale sert de masque : sa couleur suit `currentColor`. */
-.remove-icon {
-  @apply size-6 bg-current;
-  mask: var(--icon) center / contain no-repeat;
+/* Visible au survol de la carte, ou au focus clavier du bouton */
+.remove-button {
+  @apply absolute top-3 right-3 z-10 grid size-11 place-items-center rounded-full bg-black/60 text-white opacity-0 shadow-md transition hover:bg-black/80 hover:text-ratey-magenta focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-white group-hover:opacity-100;
 }
 </style>
