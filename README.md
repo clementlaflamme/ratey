@@ -46,7 +46,7 @@ C'est un **projet personnel**, né de ma passion pour le jeu vidéo et de l'envi
 - 🔐 **Authentification** : inscription et connexion avec Clerk
 - 🔎 **Recherche de jeux** via l'API d'[IGDB](https://www.igdb.com/)
 - ⭐ **Évaluations** sur 5 étoiles, au quart de point près (ex. : 4.25 / 5), modifiables et supprimables
-- ❤️ **Favoris** et  **liste « À jouer plus tard »**
+- ❤️ **Favoris** et **liste « À jouer plus tard »**
 - 🗂️ **Recherche et tri** dans ses listes par titre, studio, année ou évaluation
 - 🏆 **Accueil personnalisé** : carrousel de vos jeux les mieux notés et dernières évaluations
 - ⚙️ **Paramètres** du compte
