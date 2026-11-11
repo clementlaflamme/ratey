@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -10,5 +10,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src/**/*", "prisma.config.ts"]
+  "include": ["src/**/*", "prisma.config.ts", "vitest.config.ts"]
 }

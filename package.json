@@ -10,7 +10,7 @@
   "main": ".vite/build/main.cjs",
   "scripts": {
     "start": "electron-forge start",
-    "test": "vitest run",
+    "test": "vitest run --dir src",
     "build": "tsc --noEmit && electron-forge package",
     "package": "electron-forge package",
     "make": "electron-forge make",

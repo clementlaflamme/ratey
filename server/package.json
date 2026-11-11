@@ -5,21 +5,26 @@
   "description": "API de Ratey (Hono) : Neon via Prisma, IGDB, vérification Clerk",
   "type": "module",
   "scripts": {
-    "test": "vitest run --passWithNoTests",
+    "dev": "tsx watch --env-file=.env src/index.ts",
+    "start": "tsx --env-file=.env src/index.ts",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate"
   },
   "dependencies": {
     "@clerk/backend": "^3.27.0",
     "@hono/node-server": "^2.1.6",
+    "@hono/zod-validator": "^0.9.1",
     "@prisma/adapter-neon": "^7.10.1",
     "@prisma/client": "^7.10.1",
-    "hono": "^4.13.16"
+    "hono": "^4.13.16",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
     "dotenv": "^18.0.9",
     "prisma": "^7.10.1",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "vitest": "^5.1.0"
   }
